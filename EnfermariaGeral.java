@@ -32,4 +32,26 @@ public class EnfermariaGeral extends Enfermaria {
     this.horarioVisitas = horarioVisitas;
     this.recursosDisponiveis = new ArrayList<>();
   }
+
+  /**
+   * Adiciona um recurso à lista de recursos disponíveis na enfermaria.
+   * Ignora valores nulos ou me branco.
+   *
+   * @param recurso nome do recurso a adicionar
+   */
+  public void adicionarRecurso(String recurso){
+    if (recurso != null && !recurso.isBlank()) {
+      recursosDisponiveis.add(recurso);
+    }
+  }
+  
+  /**
+   * Remove um recurso da linha de recursos disponíveis.
+   * 
+   * @param recurso nome do recurso a remover
+   * @return {@code true} se removido com sucesso, {@code false} se não existia
+   */
+  public boolean removerRecurso(String recurso){
+    return recursosDisponieis.remove(recurso);
+  }
 }
