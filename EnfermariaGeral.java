@@ -15,6 +15,9 @@ public class EnfermariaGeral extends Enfermaria {
   /** Horário de visitas da enfermaria. */
   private String horarioVisitas;
 
+  /** Lista de recursos disponiveis na enfermaria. */
+  private List<String> recursosDisponiveis;
+
   /**
    * Cria uma nova enfermaria geral.
    *
@@ -27,5 +30,6 @@ public class EnfermariaGeral extends Enfermaria {
     super (id, camas);
     this.limiteAcompanhantes = limiteAcompanhantes;
     this.horarioVisitas = horarioVisitas;
+    this.recursosDisponiveis = new ArrayList<>();
   }
 }
