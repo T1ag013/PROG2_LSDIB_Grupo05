@@ -103,3 +103,4 @@ public class EnfermariaGeral extends Enfermaria {
             super.toString(), limiteAcompanhantes, horarioVisitas, recursosDisponiveis);
   }
 }
+sadd
