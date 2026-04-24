@@ -39,3 +39,16 @@ public class MainHospital {
         System.out.println();
         System.out.println("Menu de configuracao inicial");
         System.out.println(SEPARADOR);
+
+        String diretorioCsv = lerDiretorioCsv(leitor);
+        LocalDate dataReferencia = lerData(leitor, "Introduza a data de referencia (AAAA-MM-DD): ");
+        LocalDate dataInicio = lerData(leitor, "Introduza a data inicial do intervalo (AAAA-MM-DD): ");
+        LocalDate dataFim = lerDataFim(leitor, dataInicio);
+
+        Hospital hospital = new Hospital("Hospital Central XYZ");
+        GestorFicheiros.limparLog();
+
+        System.out.println("A carregar enfermarias do ficheiro CSV...");
+        GestorFicheiros.carregarEnfermarias(construirCaminho(diretorioCsv, "enfermarias.csv"), hospital);
+        System.out.println("     Enfermarias carregadas: " + hospital.getEnfermarias().size());
+
