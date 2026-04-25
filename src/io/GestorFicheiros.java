@@ -267,74 +267,34 @@ public class GestorFicheiros {
 
     /**
      * Carrega episódios a partir de um ficheiro CSV e associa-os às enfermarias do hospital.
-     * <p>
-     * Formato esperado (separador {@code ;}):
-     * <pre>ID_ENFERMARIA;ID_CAMA;DATA_ADMISSAO[;DATA_ALTA]</pre>
-     * Datas no formato AAAA-MM-DD. A coluna DATA_ALTA é opcional.
-     * A primeira linha é tratada como cabeçalho e ignorada.
-     * Entradas inválidas são registadas no ficheiro de log.
-     *
      * @param path caminho para o ficheiro CSV dos episódios
      * @param h    hospital com as enfermarias já carregadas
      * @throws IOException           se ocorrer erro ao escrever no ficheiro de log
      * @throws FileNotFoundException se o ficheiro CSV não for encontrado
      */
-    public static void carregarEpisodios(String path, Hospital h)
-            throws IOException, FileNotFoundException {
 
-        File f = new File(path);
-        if (!f.exists()) {
-            System.out.println("Ficheiro nao encontrado: " + path);
-        } else {
-            Scanner sc = new Scanner(f);
-            if (sc.hasNextLine()) sc.nextLine();
+    public static void carregarEpisodios(String path, Hospital hospital) throws IOException {
+        File ficheiro = resolverFicheiro(path);
 
-            int linha = 1;
-            while (sc.hasNextLine()) {
-                linha++;
-                String[] d = sc.nextLine().trim().split(";");
-
-                if (d.length < 3) {
-                    logErro("Linha " + linha + ": campos insuficientes no episodio.");
-                } else {
-                    String idEnfermaria    = d[0].trim();
-                    String idCama          = d[1].trim();
-                    String dataAdmissaoStr = d[2].trim();
-
-                    if (!validarString(idEnfermaria)) {
-                        logErro("Linha " + linha + ": ID de enfermaria invalido.");
-                    } else if (!validarString(idCama)) {
-                        logErro("Linha " + linha + ": ID de cama invalido.");
-                    } else if (!validarData(dataAdmissaoStr)) {
-                        logErro("Linha " + linha + ": data de admissao invalida.");
-                    } else {
-                        Enfermaria enf = h.obterEnfermaria(idEnfermaria);
-                        if (enf == null) {
-                            logErro("Linha " + linha + ": enfermaria nao encontrada (" + idEnfermaria + ").");
-                        } else {
-                            LocalDate admissao = LocalDate.parse(dataAdmissaoStr);
-                            Episodio ep = new Episodio(idCama, admissao);
-
-                            if (d.length >= 4 && validarString(d[3])) {
-                                if (!validarData(d[3].trim())) {
-                                    logErro("Linha " + linha + ": data de alta invalida.");
-                                } else {
-                                    LocalDate alta = LocalDate.parse(d[3].trim());
-                                    if (!alta.isAfter(admissao)) {
-                                        logErro("Linha " + linha + ": data de alta nao pode ser anterior ou igual a admissao.");
-                                    } else {
-                                        ep.darAlta(alta);
-                                        enf.adicionarEpisodio(ep);
-                                    }
-                                }
-                            } else {
-                                enf.adicionarEpisodio(ep);
-                            }
-                        }
-                    }
-                }
-            }
-            sc.close();
+        // Saída limpa em vez de estoirar com FileNotFoundException
+        if (!ficheiro.exists()) {
+            System.out.println("  [AVISO] Ficheiro nao encontrado: " + path);
+            return;
         }
+
+        Scanner sc = new Scanner(ficheiro);
+
+        // Ignorar o cabeçalho
+        if (sc.hasNextLine()) {
+            sc.nextLine();
+        }
+
+        int linha = 1;
+        while (sc.hasNextLine()) {
+            linha++;
+            // Delega o trabalho sujo
+            processarLinhaEpisodio(sc.nextLine(), linha, hospital);
+        }
+        sc.close();
     }
 }
