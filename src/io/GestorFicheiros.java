@@ -272,7 +272,6 @@ public class GestorFicheiros {
      * @throws IOException           se ocorrer erro ao escrever no ficheiro de log
      * @throws FileNotFoundException se o ficheiro CSV não for encontrado
      */
-
     public static void carregarEpisodios(String path, Hospital hospital) throws IOException {
         File ficheiro = resolverFicheiro(path);
 
@@ -284,7 +283,6 @@ public class GestorFicheiros {
 
         Scanner sc = new Scanner(ficheiro);
 
-        // Ignorar o cabeçalho
         if (sc.hasNextLine()) {
             sc.nextLine();
         }
@@ -292,9 +290,73 @@ public class GestorFicheiros {
         int linha = 1;
         while (sc.hasNextLine()) {
             linha++;
-            // Delega o trabalho sujo
             processarLinhaEpisodio(sc.nextLine(), linha, hospital);
         }
         sc.close();
     }
 }
+
+private static void processarLinhaEpisodio(String linhaCsv, int linha, Hospital hospital) {
+    String conteudo = linhaCsv.trim();
+    if (conteudo.isEmpty()) {
+        return;
+    }
+
+    String[] dados = conteudo.split(";");
+
+    // Barreira, se nao tiver todos os espaços da lista completos da erro
+    if (dados.length < 3) {
+        logErro("Linha " + linha + ": campos insuficientes no episodio.");
+        return;
+    }
+
+    String idEnfermaria = dados[0].trim();
+    String idCama = dados[1].trim();
+    String dataAdmissaoStr = dados[2].trim();
+
+    //Validação de Strings e Formatos dos dados do ficheiro CSV
+    if (!validarString(idEnfermaria)) {
+        logErro("Linha " + linha + ": ID de enfermaria invalido.");
+        return;
+    }
+    if (!validarString(idCama)) {
+        logErro("Linha " + linha + ": ID de cama invalido.");
+        return;
+    }
+    if (!validarData(dataAdmissaoStr)) {
+        logErro("Linha " + linha + ": data de admissao invalida.");
+        return;
+    }
+
+    // Verificar se a enfermaria colocada no ficheiro CSV existe
+    Enfermaria enfermaria = hospital.obterEnfermaria(idEnfermaria);
+    if (enfermaria == null) {
+        logErro("Linha " + linha + ": enfermaria nao encontrada (" + idEnfermaria + ").");
+        return;
+    }
+
+    LocalDate admissao = LocalDate.parse(dataAdmissaoStr);
+    Episodio episodio = new Episodio(idCama, admissao);
+
+    if (dados.length >= 4 && validarString(dados[3])) {
+        String dataAltaStr = dados[3].trim();
+
+        if (!validarData(dataAltaStr)) {
+            logErro("Linha " + linha + ": data de alta invalida.");
+            return;
+        }
+
+        LocalDate alta = LocalDate.parse(dataAltaStr);
+        if (!alta.isAfter(admissao)) {
+            logErro("Linha " + linha + ": data de alta nao pode ser anterior ou igual a admissao.");
+            return;
+        }
+
+        // Se passou em tudo, damos alta ao episódio
+        episodio.darAlta(alta);
+    }
+
+    // Independentemente de ter alta ou não, é adicionado à enfermaria.
+    enfermaria.adicionarEpisodio(episodio);
+}
+
