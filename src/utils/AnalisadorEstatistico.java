@@ -101,5 +101,37 @@ public class AnalisadorEstatistico {
                     totalEpisodios, media, desvioPadrao, minimo, maximo);
         }
     }
+
+    /**
+     * Calcula estatística de LoS de uma enfermaria.
+     *
+     * @param enfermaria enfermaria a analisar
+     * @return resumo estatístico
+     */
+    public static SumarioLoS calculasEstatisticaLoS(Enfermaria enfermaria) {
+        List<Long> valores = enfermaria.getValoresLoS();
+        if (valores.isEmpty()) {
+            return new SumarioLoS(0, 0.0, 0.0, 0, 0);
+        }
+
+        long minimo = valores.get(0);
+        long maximo = valores.get(0);
+        double soma = 0.0;
+        for (Long valor : valores) {
+            soma += valor;
+            if (valor < minimo) minimo = valor;
+            if (valor > maximo) maximo = valor;
+        }
+
+        double media = soma / valores.size();
+        double somaQuadrados = 0.0;
+        for (Long valor : valores) {
+            double diferenca = valor - media;
+            somaQuadrados += diferenca * diferenca;
+        }
+        double desvioPadrao = Math.sqrt(somaQuadrados / valores.size());
+
+        return new SumarioLoS(valores.size(), media, desvioPadrao, minimo, maximo);
+    }
 }
 
