@@ -275,3 +275,42 @@ public class GestorFicheiros {
         }
     }
 }
+
+/**
+ * Constrói e regista uma Enfermaria Geral no sistema.
+
+ * @param dados       o array de strings resultante da separação da linha do CSV
+ * @param linha       o número da linha atual (utilizado para rastreio no log)
+ * @param id          o identificador único da enfermaria (já pré-validado)
+ * @param numeroCamas a capacidade máxima da enfermaria (já pré-validada)
+ * @param hospital    a instância do hospital onde a enfermaria será injetada
+ * @throws IOException caso ocorra falha na escrita do ficheiro de log
+ */
+private static void processarEnfermariaGeral(String[] dados, int linha, String id,
+                                             int numeroCamas, Hospital hospital) throws IOException {
+
+    // Esta barreira valida se na quarta coluna temos um numero (nunmero de acompanhantes), caso contrario temos um erro
+    if (dados.length < 5 || !validarInteiro(dados[3].trim()) || !validarString(dados[4])) {
+        logErro("Linha " + linha + ": dados invalidos para enfermaria geral.");
+        return;
+    }
+
+    // Conversão segura
+    int acompanhantes = Integer.parseInt(dados[3].trim());
+
+    // Impede que se coloquem um numero de acompanhantes negativo
+    if (acompanhantes < 0) {
+        logErro("Linha " + linha + ": numero de acompanhantes invalido.");
+        return;
+    }
+
+    // Instanciação base com os dados obrigatórios
+    EnfermariaGeral enfermaria = new EnfermariaGeral(id, numeroCamas, acompanhantes, dados[4].trim());
+    for (int i = 5; i < dados.length; i++) {
+        if (validarString(dados[i])) {
+            enfermaria.adicionarRecurso(dados[i].trim());
+        }
+    }
+
+    hospital.adicionarEnfermaria(enfermaria);
+}
