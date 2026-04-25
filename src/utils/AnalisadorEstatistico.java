@@ -133,5 +133,31 @@ public class AnalisadorEstatistico {
 
         return new SumarioLoS(valores.size(), media, desvioPadrao, minimo, maximo);
     }
+
+    /**
+     * Mostra a análise diária de pressão num intervalo.
+     *
+     * @param enfermaria enfermaria a analisar
+     * @param dataInicio data inicial
+     * @param dataFim data final
+     */
+    public static void analisarPressaoPorIntervalo(Enfermaria enfermaria, LocalDate dataInicio, LocalDate dataFim){
+        if (dataInicio == null || dataFim == null || dataInicio.isAfter(dataFim)){
+            System.out.println(" Intervalo inválido.");
+            return;
+        }
+
+        LocalDate dataAtual = dataInicio;
+        while (!dataAtual.isAfter(dataFim)){
+            double taxa = enfermaria.getTaxaOcupacao(dataAtual);
+            String estado = enfermaria.emPressao(dataAtual) ? "Em pressão" : "Estado normal";
+            System.out.printf(" %s -> %s (%.1f%%)%n", dataAtual, estado, taxa);
+            dataAtual = dataAtual.plusDays(1);
+        }
+
+        System.out.printf(" Dias em pressão: %.1f%%%n",
+                enfermaria.getPercentagemDiasEmPressao(dataInicio, dataFim));
+
+    }
 }
 
