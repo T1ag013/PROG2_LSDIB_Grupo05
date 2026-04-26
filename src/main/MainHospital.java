@@ -84,7 +84,7 @@ public class MainHospital {
         System.out.println(SEPARADOR);
 
         for (Enfermaria enf : hospital.getEnfermarias()) {
-            AnalisadorEstatistico.SumarioLoS sumario = AnalisadorEstatistico.calcularEstatisticasLoS(enf);
+            AnalisadorEstatistico.SumarioLoS sumario = AnalisadorEstatistico.calculasEstatisticaLoS(enf);
             System.out.printf("  %s: %s%n", enf.getIdentificador(), sumario);
         }
 

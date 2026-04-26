@@ -6,7 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Representa uma enfermaria do hospital.
+ * Classe abstrata que representa uma enfermaria hospitalar.
  */
 public abstract class Enfermaria implements Analisavel {
 
@@ -137,6 +137,29 @@ public abstract class Enfermaria implements Analisavel {
             valores.add(episodio.calcularLoS());
         }
         return valores;
+    }
+    /**
+     * Calcula a percentagem de dias em pressão num intervalo.
+     *
+     * @param dataInicio data inicial
+     * @param dataFim data final
+     * @return percentagem de dias em pressão
+     */
+    public double getPercentagemDiasEmPressao(LocalDate dataInicio, LocalDate dataFim) {
+        if (dataInicio == null || dataFim == null || dataInicio.isAfter(dataFim)) {
+            return 0.0;
+        }
+        int totalDias = 0;
+        int diasEmPressao = 0;
+        LocalDate dataAtual = dataInicio;
+        while (!dataAtual.isAfter(dataFim)) {
+            totalDias++;
+            if (emPressao(dataAtual)) {
+                diasEmPressao++;
+            }
+            dataAtual = dataAtual.plusDays(1);
+        }
+        return totalDias == 0 ? 0.0 : (diasEmPressao * 100.0) / totalDias;
     }
 
     /**
