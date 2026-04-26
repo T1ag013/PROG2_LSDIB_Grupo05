@@ -3,6 +3,7 @@ package utils;
 import modelo.Enfermaria;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -158,6 +159,33 @@ public class AnalisadorEstatistico {
         System.out.printf(" Dias em pressão: %.1f%%%n",
                 enfermaria.getPercentagemDiasEmPressao(dataInicio, dataFim));
 
+    }
+
+    /**
+     * Ordena uma lista de enfermarias por taxa de ocupação decrescente,
+     * utilizando uma classe anónima como {@link Comparator}.
+     *
+     * @param enfermarias lista de enfermarias
+     * @param data data de referência
+     */
+    public static void ordenarPorTaxaOcupacao(List<Enfermaria> enfermarias, LocalDate data) {
+        enfermarias.sort(new Comparator<Enfermaria>() {
+            /**
+             * Compara duas enfermarias por taxa de ocupação decrescente.
+             *
+             * @param primeira primeira enfermaria
+             * @param segunda segunda enfermaria
+             * @return valor de comparação
+             */
+            @Override
+            public int compare(Enfermaria primeira, Enfermaria segunda) {
+                int comparacao = Double.compare(segunda.getTaxaOcupacao(data), primeira.getTaxaOcupacao(data));
+                if (comparacao != 0) {
+                    return comparacao;
+                }
+                return primeira.getIdentificador().compareToIgnoreCase(segunda.getIdentificador());
+            }
+        });
     }
 }
 
