@@ -87,3 +87,30 @@ public class MainHospital {
             System.out.printf("  %s: %s%n", enf.getIdentificador(), sumario);
         }
 
+        System.out.println("\n" + SEPARADOR);
+        System.out.printf(" Indicadores de Ocupacao em %s%n", dataReferencia);
+        System.out.println(SEPARADOR);
+
+        for (Enfermaria enf : hospital.getEnfermarias()) {
+            System.out.printf("%n  Enfermaria : %s%n", enf.getIdentificador());
+            System.out.printf("  Ocupacao   : %d / %d camas%n",
+                    enf.getOcupacaoAbsoluta(dataReferencia), enf.getNumeroCamas());
+            System.out.printf("  Taxa       : %.1f%%%n",enf.getTaxaOcupacao(dataReferencia));
+            System.out.printf("  Estado     : %s%n", enf.emPressao(dataReferencia) ? "Em pressao" : "Estado normal");
+        }
+      System.out.println("\n" + SEPARADOR);
+        System.out.println("RF2: Sumario de Length of Stay (LoS) por Enfermaria");
+        System.out.println(SEPARADOR);
+
+        for (Enfermaria enf : hospital.getEnfermarias()) {
+        AnalisadorEstatistico.SumarioLoS sumario = AnalisadorEstatistico.calcularEstatisticasLoS(enf);
+        System.out.printf("  %s: %s%n", enf.getIdentificador(), sumario);
+    }
+        System.out.println("\n" + SEPARADOR);
+        System.out.printf("Analise de Pressao [%s a %s]%n", dataInicio, dataFim);
+        System.out.println(SEPARADOR);
+
+        for (Enfermaria enf : hospital.getEnfermarias()) {
+            System.out.printf("%nEnfermaria %s:%n", enf.getIdentificador());
+            AnalisadorEstatistico.analisarPressaoPorIntervalo(enf, dataInicio, dataFim);
+        }
