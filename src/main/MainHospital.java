@@ -155,5 +155,44 @@ public class MainHospital {
                 } else {
                     return diretorio;
                 }
+
+
+                /**
+                 * Lê uma data introduzida pelo utilizador.
+                 * @param leitor leitor do teclado
+                 * @param mensagem mensagem a apresentar
+                 * @return data válida
+                 */
+                public static LocalDate lerData(Scanner leitor, String mensagem) {
+                    while (true) {
+                        System.out.print(mensagem);
+                        String texto = leitor.nextLine().trim();
+
+                        // Usamos o teu método de validação como barreira.
+                        if (validarData(texto)) {
+                            return LocalDate.parse(texto);
+                        } else {
+                            System.out.println("Data invalida. Use o formato AAAA-MM-DD.");
+                        }
+                    }
+                }
+            }
+        }
+
+        /**
+         * Lê a data final do intervalo.
+         *
+         * @param leitor leitor do teclado
+         * @param dataInicio data inicial do intervalo
+         * @return data final válida
+         */
+        public static LocalDate lerDataFim(Scanner leitor, LocalDate dataInicio) {
+            while (true) {
+                LocalDate dataFim = lerData(leitor, "Introduza a data final do intervalo (AAAA-MM-DD): ");
+                if (dataFim.isBefore(dataInicio)) {
+                    System.out.println("A data final nao pode ser anterior a data inicial.");
+                } else {
+                    return dataFim;
+                }
             }
         }
