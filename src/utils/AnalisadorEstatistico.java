@@ -98,7 +98,7 @@ public class AnalisadorEstatistico {
             if (totalEpisodios == 0){
                 return "Sem episódios com alta";
             }
-            return String.format("n=%d | media=%.2f | dp=%.2f | min=%d | max=%d",
+            return String.format("Pacientes com alta=%d | media=%.2f | desvio padrao=%.2f | Minimo=%d | Máximo=%d",
                     totalEpisodios, media, desvioPadrao, minimo, maximo);
         }
     }
