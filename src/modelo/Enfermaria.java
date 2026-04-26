@@ -6,7 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Classe abstrata que representa uma enfermaria hospitalar.
+ * Representa uma enfermaria do hospital.
  */
 public abstract class Enfermaria implements Analisavel {
 
@@ -138,6 +138,43 @@ public abstract class Enfermaria implements Analisavel {
         }
         return valores;
     }
+
+    /**
+     * Calcula o número de camas ocupadas numa data.
+     *
+     * @param data data a analisar
+     * @return camas ocupadas
+     */
+    @Override
+    public int getOcupacaoAbsoluta(LocalDate data) {
+        return getEpisodiosAtivos(data).size();
+    }
+
+    /**
+     * Calcula a taxa de ocupação numa data.
+     *
+     * @param data data a analisar
+     * @return taxa de ocupação
+     */
+    @Override
+    public double getTaxaOcupacao(LocalDate data) {
+        if (numeroCamas <= 0) {
+            return 0.0;
+        }
+        return (getOcupacaoAbsoluta(data) * 100.0) / numeroCamas;
+    }
+
+    /**
+     * Indica se a enfermaria está em pressão numa data.
+     *
+     * @param data data a analisar
+     * @return {@code true} se a taxa for superior a 85%
+     */
+    @Override
+    public boolean emPressao(LocalDate data) {
+        return getTaxaOcupacao(data) > 85.0;
+    }
+
     /**
      * Calcula a percentagem de dias em pressão num intervalo.
      *
@@ -178,33 +215,33 @@ public abstract class Enfermaria implements Analisavel {
         return false;
     }
 
-    @Override
-    public int getOcupacaoAbsoluta(LocalDate data) {
-        return getEpisodiosAtivos(data).size();
-    }
-
-    @Override
-    public double getTaxaOcupacao(LocalDate data) {
-        if (numeroCamas <= 0) return 0.0;
-        return (getOcupacaoAbsoluta(data) * 100.0) / numeroCamas;
-    }
-
-    @Override
-    public boolean emPressao(LocalDate data) {
-        return getTaxaOcupacao(data) > 85.0;
-    }
-
+    /**
+     * Devolve uma representação textual da enfermaria.
+     *
+     * @return texto com os dados principais
+     */
     @Override
     public String toString() {
         return String.format("%s | ID: %s | Camas: %d | Episodios: %d",
-                getTipoEnfermaria(), identificador, numeroCamas, episodios.size());
+                getTipoEnfermaria(),
+                identificador,
+                numeroCamas,
+                episodios.size());
     }
 
+    /**
+     * Verifica se dois episódios se sobrepõem.
+     *
+     * @param primeiro primeiro episódio
+     * @param segundo segundo episódio
+     * @return {@code true} se houver sobreposição
+     */
     private boolean episodiosSobrepostos(Episodio primeiro, Episodio segundo) {
         LocalDate inicioPrimeiro = primeiro.getDataAdmissao();
         LocalDate fimPrimeiro = primeiro.temAlta() ? primeiro.getDataAlta() : LocalDate.MAX;
         LocalDate inicioSegundo = segundo.getDataAdmissao();
         LocalDate fimSegundo = segundo.temAlta() ? segundo.getDataAlta() : LocalDate.MAX;
+
         return !inicioPrimeiro.isAfter(fimSegundo) && !inicioSegundo.isAfter(fimPrimeiro);
     }
 }
