@@ -128,3 +128,32 @@ public class MainHospital {
 
         leitor.close();
     }
+
+    /**
+     * Lê o diretório onde estão os ficheiros CSV.
+     *
+     * @param leitor leitor do teclado
+     * @return diretório válido
+     */
+    public static String lerDiretorioCsv(Scanner leitor) {
+        while (true) {
+            System.out.print("Introduza o diretorio dos CSV: ");
+            String diretorio = leitor.nextLine().trim();
+
+            if (diretorio.isEmpty()) {
+                System.out.println("Diretorio invalido.");
+            } else {
+
+                File pasta = new File(diretorio);
+                File ficheiroEnfermarias = new File(pasta, "enfermarias.csv");
+                File ficheiroEpisodios = new File(pasta, "episodios.csv");
+
+                if (!pasta.exists() || !pasta.isDirectory()) {
+                    System.out.println("O diretorio indicado nao existe.");
+                } else if (!ficheiroEnfermarias.exists() || !ficheiroEpisodios.exists()) {
+                    System.out.println("O diretorio tem de conter os ficheiros enfermarias.csv e episodios.csv.");
+                } else {
+                    return diretorio;
+                }
+            }
+        }
