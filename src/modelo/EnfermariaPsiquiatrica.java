@@ -54,6 +54,7 @@ public class EnfermariaPsiquiatrica extends Enfermaria {
      *
      * @return string com identificador, camas, horário de visitas e nível de segurança
      */
+    @Override
     public String toString(){
         return String.format("%s | Tipo: Psiquiátrica | Visitas: %s | Segurança: %s",
                 super.toString(), horarioVisitas, nivelSeguranca);
