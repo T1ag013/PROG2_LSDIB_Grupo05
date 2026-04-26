@@ -260,7 +260,7 @@ public class GestorFicheiros {
                                                               String id, int cap, Hospital h)
             throws IOException {
 
-        if (d.length < 6 || !validarString(d[3]) || validarDecimal(d[4]) || validarDecimal(d[5])) {
+        if (d.length < 6 || !validarString(d[3]) || !validarDecimal(d[4]) || !validarDecimal(d[5])) {
             logErro("Linha " + linha + ": INTENSIVOS requer horario, pressao e pressao de referencia validos.");
         } else {
             double pressao    = Double.parseDouble(d[4].trim());
